@@ -37,7 +37,7 @@ public class IonicKeyboard extends CordovaPlugin {
                     InputMethodManager inputManager = (InputMethodManager) cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     View v = cordova.getActivity().getCurrentFocus();
 
-                    if (v == null) {
+                    if (inputManager == null || v == null) {
                         callbackContext.error("No current focus");
                     } else {
                         inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -50,7 +50,10 @@ public class IonicKeyboard extends CordovaPlugin {
         if ("show".equals(action)) {
             cordova.getThreadPool().execute(new Runnable() {
                 public void run() {
-                    ((InputMethodManager) cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    InputMethodManager inputManager = (InputMethodManager) cordova.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (inputManager != null) {
+                        inputManager.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    }
                     callbackContext.success(); // Thread-safe.
                 }
             });
